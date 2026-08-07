@@ -96,17 +96,15 @@ export default function BrowsePage() {
         }
       />
 
-      <div className="flex gap-8">
-        <aside className="hidden lg:block">
-          <WallpaperFilters
-            filters={{
-              device: filters.device_type || "all",
-              category: filters.categories || [],
-              sort: filters.sort_by || "newest",
-            }}
-            onChange={handleFiltersChange}
-          />
-        </aside>
+      <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
+        <WallpaperFilters
+          filters={{
+            device: filters.device_type || "all",
+            category: filters.categories || [],
+            sort: filters.sort_by || "newest",
+          }}
+          onChange={handleFiltersChange}
+        />
 
         <div className="flex-1">
           {isLoading && wallpapers.length === 0 ? (

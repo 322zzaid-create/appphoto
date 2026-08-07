@@ -82,15 +82,15 @@ export function CategoryGrid({ categories, className }: CategoryGridProps) {
             >
               <div
                 className={cn(
-                  "relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br p-5 transition-all duration-300",
+                  "relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br p-4 transition-all duration-300 sm:p-5",
                   "hover:border-white/20 hover:shadow-xl",
                   gradient,
                 )}
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-10">
                   <IconComponent className="h-5 w-5 text-white/80" />
                 </div>
-                <h3 className="text-sm font-semibold text-white">{cat.name}</h3>
+                <h3 className="truncate text-sm font-semibold text-white">{cat.name}</h3>
                 <p className="mt-0.5 text-xs text-white/40">
                   {cat.count.toLocaleString()} wallpapers
                 </p>

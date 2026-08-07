@@ -58,6 +58,7 @@ export default function CategoryPage() {
     let cancelled = false
 
     const init = async () => {
+      setLoading(true)
       const supabase = createClient()
 
       const { data: cat } = await supabase
@@ -72,7 +73,6 @@ export default function CategoryPage() {
       if (!cancelled) setLoading(false)
     }
 
-    setLoading(true)
     init()
 
     return () => {

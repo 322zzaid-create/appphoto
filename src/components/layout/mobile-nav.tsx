@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { Home, Compass, Search, Heart, Bell, Sparkles } from "lucide-react";
+import { Home, Compass, Heart, Bell, Sparkles } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/", icon: Home },
@@ -16,26 +17,48 @@ const navItems = [
 export function MobileNav() {
   const pathname = usePathname();
 
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0f]/90 backdrop-blur-2xl pb-[env(safe-area-inset-bottom)] lg:hidden">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 pt-2 lg:hidden">
+      <div
+        className={cn(
+          "mx-auto flex max-w-md items-center justify-around rounded-2xl",
+          "border border-white/10 bg-[#0d0d16]/90 shadow-tabbar backdrop-blur-2xl",
+          "px-2 pb-safe",
+        )}
+      >
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const active = isActive(item.href);
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "relative flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 transition-colors",
-                isActive ? "text-purple-400" : "text-white/40",
+                "relative flex flex-col items-center gap-1 rounded-xl px-2 py-2 transition-colors",
+                active ? "text-white" : "text-white/40",
               )}
             >
-              {isActive && (
-                <div className="absolute -top-1 h-0.5 w-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
-              )}
-              <Icon className="h-5 w-5" />
+              <span
+                className={cn(
+                  "flex h-8 w-12 items-center justify-center rounded-xl transition-colors duration-200",
+                  active
+                    ? "bg-gradient-to-br from-purple-500/25 to-blue-500/25 text-purple-300"
+                    : "text-inherit",
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="mobile-nav-pill"
+                    className="absolute inset-0 rounded-xl border border-white/10"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <Icon className="relative h-5 w-5" strokeWidth={active ? 2.2 : 1.8} />
+              </span>
               <span className="text-[10px] font-medium">{item.label}</span>
             </Link>
           );

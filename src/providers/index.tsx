@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function makeQueryClient() {
@@ -26,13 +26,15 @@ function getQueryClient() {
   return browserQueryClient;
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-  const queryClient = getQueryClient();
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function Providers({ children }: { children: React.ReactNode }) {
+  const queryClient = getQueryClient();
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

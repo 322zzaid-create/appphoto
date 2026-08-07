@@ -40,8 +40,8 @@ export function FeaturedSection({
   return (
     <div className={cn("relative", className)}>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">Featured</h2>
-        <div className="flex gap-1.5">
+        <h2 className="text-lg font-bold text-white sm:text-xl">Featured</h2>
+        <div className="hidden gap-1.5 sm:flex">
           <button
             onClick={() => scroll("left")}
             className="rounded-lg border border-white/10 bg-white/5 p-2 text-white/40 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
@@ -59,7 +59,7 @@ export function FeaturedSection({
 
       <div
         ref={scrollRef}
-        className="-mx-4 flex gap-4 overflow-x-auto scroll-smooth px-4 pb-4 scrollbar-none sm:mx-0 sm:px-0"
+        className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth px-4 pb-2 scroll-snap-x sm:mx-0 sm:gap-4 sm:px-0"
         style={{ scrollbarWidth: "none" }}
       >
         {items.map((item, i) => (
@@ -69,7 +69,7 @@ export function FeaturedSection({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
             onClick={() => onItemClick?.(item)}
-            className="group relative min-w-[280px] shrink-0 cursor-pointer overflow-hidden rounded-2xl sm:min-w-[340px]"
+            className="group relative min-w-[260px] shrink-0 cursor-pointer overflow-hidden rounded-2xl sm:min-w-[340px]"
           >
             <div className="aspect-[16/10] w-full">
               <img

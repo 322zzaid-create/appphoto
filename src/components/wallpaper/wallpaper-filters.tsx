@@ -152,13 +152,14 @@ export function WallpaperFilters({
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="absolute inset-y-0 left-0 w-80 max-w-[85vw] overflow-y-auto border-r border-white/10 bg-[#0a0a0f]/95 p-6 backdrop-blur-2xl"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[#0a0a0f]/95 p-5 pb-safe backdrop-blur-2xl"
             >
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20" />
+              <div className="mb-5 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-white">Filters</h2>
                 <button
                   onClick={() => setMobileOpen(false)}
@@ -168,7 +169,7 @@ export function WallpaperFilters({
                 </button>
               </div>
               {filterContent}
-              <div className="mt-8">
+              <div className="mt-8 pb-2">
                 <Button className="w-full" onClick={() => setMobileOpen(false)}>
                   Apply Filters
                 </Button>

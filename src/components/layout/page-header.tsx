@@ -23,9 +23,9 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("mb-8", className)}>
+    <div className={cn("mb-6 sm:mb-8", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="mb-3 flex items-center gap-1 text-sm text-white/40">
+        <nav className="mb-3 hidden items-center gap-1 text-sm text-white/40 sm:flex">
           <Link href="/" className="transition-colors hover:text-white/70">
             Home
           </Link>
@@ -42,9 +42,9 @@ export function PageHeader({
           ))}
         </nav>
       )}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">{title}</h1>
+          <h1 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl">{title}</h1>
           {description && (
             <p className="mt-1 text-sm text-white/50">{description}</p>
           )}

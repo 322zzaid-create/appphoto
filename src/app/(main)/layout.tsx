@@ -11,10 +11,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="app-bg min-h-screen">
       <Navbar />
       <Sidebar />
-      <main className="pt-16 lg:pl-[260px] pb-20 lg:pb-0">
+      <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] lg:pl-[260px] pb-28 lg:pb-0">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
           {children}
         </div>

@@ -6,11 +6,11 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const sizeMap = {
-  sm: "max-w-sm",
-  md: "max-w-lg",
-  lg: "max-w-3xl",
-  xl: "max-w-5xl",
-  full: "max-w-[90vw]",
+  sm: "sm:max-w-sm",
+  md: "sm:max-w-lg",
+  lg: "sm:max-w-3xl",
+  xl: "sm:max-w-5xl",
+  full: "sm:max-w-[90vw]",
 };
 
 export interface ModalProps {
@@ -44,7 +44,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     return (
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -55,12 +55,13 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             />
             <motion.div
               ref={ref}
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              initial={{ opacity: 0, y: 48, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 48, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
               className={cn(
-                "relative w-full rounded-2xl border border-white/10 bg-[#0a0a0f]/95 backdrop-blur-2xl shadow-2xl",
+                "relative w-full max-h-[92vh] overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0a0a0f]/95 shadow-2xl backdrop-blur-2xl",
+                "sm:rounded-2xl sm:max-h-none sm:overflow-visible",
                 sizeMap[size],
                 className,
               )}

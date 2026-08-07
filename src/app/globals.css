@@ -9,6 +9,9 @@
   --animate-slideDown: slideDown 0.3s ease-out;
   --animate-scaleIn: scaleIn 0.2s ease-out;
   --animate-shimmer: shimmer 2s infinite;
+  --animate-sheetUp: sheetUp 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  --shadow-tabbar: 0 -8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 @keyframes fadeIn {
@@ -36,16 +39,43 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: #0a0a0f;
   color: #ededed;
   font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
 }
 
+/*
+ * Remove the grey tap highlight and the long-press callout on touch
+ * devices so the app feels native (iOS / Android).
+ */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg,
+video,
+canvas {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Slim, unobtrusive scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -79,25 +109,34 @@ body {
   outline-offset: 2px;
 }
 
+/* ------------------------------------------------------------------ */
+/* Glass surfaces                                                        */
+/* ------------------------------------------------------------------ */
 .glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-strong {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .glass-card {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
 }
 
+/* ------------------------------------------------------------------ */
+/* Gradient text                                                         */
+/* ------------------------------------------------------------------ */
 .gradient-text {
   background: linear-gradient(135deg, #a855f7, #3b82f6, #06b6d4);
   -webkit-background-clip: text;
@@ -112,10 +151,84 @@ body {
   background-clip: text;
 }
 
+/* ------------------------------------------------------------------ */
+/* Motion helpers                                                       */
+/* ------------------------------------------------------------------ */
 .animate-enter {
   animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
 }
 
 .animate-leave {
   animation: fadeIn 0.2s ease-in reverse;
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile app utilities                                                 */
+/* ------------------------------------------------------------------ */
+
+/* Respect the notch / home-indicator areas on devices. */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Full-bleed horizontal scroller with iOS-style snap + hidden scrollbar. */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scroll-snap-x::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-snap-x > * {
+  scroll-snap-align: start;
+}
+
+/* Prevent the pull-to-refresh / rubber-band fighting the app chrome. */
+.no-bounce {
+  overscroll-behavior-y: contain;
+}
+
+/* iOS-style press feedback fallback for elements without framer-motion. */
+.pressable {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.pressable:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* Hide scrollbar for internal rails (kept for components that use it). */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* App background ambient glow, subtle enough to keep the dark identity. */
+.app-bg {
+  position: relative;
+  background:
+    radial-gradient(1100px 520px at 85% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
+    radial-gradient(900px 480px at -10% 30%, rgba(59, 130, 246, 0.1), transparent 55%),
+    #0a0a0f;
+}
+
+/* Mobile action bar area (used under bottom sheets / sticky bars). */
+.safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
 }

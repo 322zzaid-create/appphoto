@@ -59,14 +59,14 @@ export function HomeContent({
   }));
 
   return (
-    <div className="space-y-12">
-      <section className="py-16 text-center">
-        <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">
+    <div className="space-y-10 sm:space-y-12">
+      <section className="py-10 text-center sm:py-16">
+        <h1 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-6xl">
           <span className="gradient-text">Discover Amazing</span>
           <br />
           <span className="text-white">Wallpapers</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-base text-white/50 sm:text-lg">
+        <p className="mx-auto mt-3 max-w-xl text-sm text-white/50 sm:mt-4 sm:text-base lg:text-lg">
           Find the perfect wallpaper for your phone, tablet, or desktop. Thousands
           of high-quality wallpapers updated daily.
         </p>
@@ -75,24 +75,24 @@ export function HomeContent({
       {wallpaperOfTheDay && (
         <section>
           <Link href={`/wallpaper/${wallpaperOfTheDay.id}`} className="group block">
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-              <div className="aspect-[21/9] w-full">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:rounded-3xl">
+              <div className="aspect-[16/9] w-full sm:aspect-[21/9]">
                 <img
                   src={wallpaperOfTheDay.preview_url || wallpaperOfTheDay.thumbnail_url || ""}
                   alt={wallpaperOfTheDay.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8">
                 <span className="mb-2 inline-block rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-1 text-xs font-bold text-white">
                   Wallpaper of the Day
                 </span>
-                <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                <h2 className="text-xl font-bold text-white sm:text-3xl">
                   {wallpaperOfTheDay.title}
                 </h2>
                 {wallpaperOfTheDay.uploader && (
-                  <p className="mt-1 text-sm text-white/50">
+                  <p className="mt-1 text-xs text-white/50 sm:text-sm">
                     by {wallpaperOfTheDay.uploader.full_name || wallpaperOfTheDay.uploader.username}
                   </p>
                 )}
@@ -113,7 +113,7 @@ export function HomeContent({
 
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">Categories</h2>
+          <h2 className="text-lg font-bold text-white sm:text-xl">Categories</h2>
           <Link
             href="/browse"
             className="text-sm text-purple-400 transition-colors hover:text-purple-300"
@@ -126,7 +126,7 @@ export function HomeContent({
 
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">Latest Wallpapers</h2>
+          <h2 className="text-lg font-bold text-white sm:text-xl">Latest Wallpapers</h2>
           <Link
             href="/browse"
             className="text-sm text-purple-400 transition-colors hover:text-purple-300"
@@ -147,8 +147,8 @@ export function HomeContent({
         />
       </section>
 
-      <section className="py-8 text-center">
-        <div className="glass-card mx-auto max-w-md p-8">
+      <section className="py-6 text-center sm:py-8">
+        <div className="glass-card mx-auto max-w-md p-6 sm:p-8">
           <h2 className="text-xl font-bold text-white">Explore More</h2>
           <p className="mt-2 text-sm text-white/50">
             Browse thousands of wallpapers across dozens of categories.

@@ -63,13 +63,12 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b transition-all duration-300",
-        scrolled
-          ? "border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl shadow-lg"
-          : "border-transparent bg-transparent",
+        "fixed inset-x-0 top-0 z-50 border-b pt-safe transition-all duration-300",
+        "border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl",
+        scrolled && "shadow-lg",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-16">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">

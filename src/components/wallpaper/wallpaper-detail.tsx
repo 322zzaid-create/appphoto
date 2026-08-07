@@ -79,18 +79,18 @@ export function WallpaperDetail({
       {onBack && (
           <button
             onClick={onBack}
-            className="mb-4 flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white"
+            className="mb-4 flex items-center gap-2 rounded-xl p-1 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
         )}
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-soft"
           >
             <div
               className="relative w-full"
@@ -109,11 +109,11 @@ export function WallpaperDetail({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="space-y-6"
+            className="space-y-5 lg:space-y-6"
           >
             <div>
               <div className="flex items-start justify-between gap-3">
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-xl font-bold text-white sm:text-2xl">
                   {wallpaper.title}
                 </h1>
                 <div className="flex shrink-0 items-center gap-1.5">
@@ -234,6 +234,7 @@ export function WallpaperDetail({
             <div className="flex items-center gap-2">
               <Button
                 variant="primary"
+                size="lg"
                 className="flex-1"
                 onClick={() => setShowDownloadModal(true)}
               >
@@ -242,6 +243,7 @@ export function WallpaperDetail({
               </Button>
               <Button
                 variant="secondary"
+                className="h-12 w-12 p-0 lg:h-10 lg:w-auto lg:px-4"
                 onClick={() => onLike?.()}
               >
                 <Heart
@@ -251,10 +253,18 @@ export function WallpaperDetail({
                   )}
                 />
               </Button>
-              <Button variant="secondary" onClick={onFavorite}>
+              <Button
+                variant="secondary"
+                className="h-12 w-12 p-0 lg:h-10 lg:w-auto lg:px-4"
+                onClick={onFavorite}
+              >
                 <Star className={cn("h-4 w-4", isFavorited && "fill-yellow-400 text-yellow-400")} />
               </Button>
-              <Button variant="secondary" onClick={onShare}>
+              <Button
+                variant="secondary"
+                className="h-12 w-12 p-0 lg:h-10 lg:w-auto lg:px-4"
+                onClick={onShare}
+              >
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
@@ -302,8 +312,8 @@ export function WallpaperDetail({
         </div>
 
         {similarWallpapers && (
-          <div className="mt-12">
-            <h2 className="mb-6 text-xl font-bold text-white">
+          <div className="mt-8 sm:mt-12">
+            <h2 className="mb-4 text-lg font-bold text-white sm:mb-6 sm:text-xl">
               Similar Wallpapers
             </h2>
             {similarWallpapers}

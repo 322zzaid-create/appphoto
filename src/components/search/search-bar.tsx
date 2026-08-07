@@ -95,10 +95,6 @@ export function SearchBar({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  useEffect(() => {
-    setSelectedIndex(-1);
-  }, [query]);
-
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <div
@@ -115,6 +111,7 @@ export function SearchBar({
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
+            setSelectedIndex(-1);
             debouncedSearch(e.target.value);
           }}
           onFocus={() => setFocused(true)}
