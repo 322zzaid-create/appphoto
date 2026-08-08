@@ -218,8 +218,8 @@ export function SettingsSheet({ open, onClose }: SettingsSheetProps) {
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             className={cn(
               "relative w-full overflow-y-auto rounded-2xl border border-white/10 bg-[#0a0a0f]/95 shadow-2xl backdrop-blur-2xl",
-              "max-h-[85vh] p-5",
-              "sm:max-w-sm",
+              "max-h-[78vh] p-5",
+              "sm:max-w-[22rem]",
             )}
           >
             {content}
