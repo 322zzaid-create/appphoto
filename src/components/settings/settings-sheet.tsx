@@ -202,13 +202,13 @@ export function SettingsSheet({ open, onClose }: SettingsSheetProps) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-xl"
             onClick={onClose}
           />
           <motion.div
@@ -217,12 +217,11 @@ export function SettingsSheet({ open, onClose }: SettingsSheetProps) {
             exit={{ opacity: 0, y: 48, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             className={cn(
-              "relative w-full overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0a0a0f]/95 shadow-2xl backdrop-blur-2xl",
-              "max-h-[92vh] p-5 pb-safe",
-              "sm:max-w-sm sm:rounded-2xl sm:max-h-[85vh]",
+              "relative w-full overflow-y-auto rounded-2xl border border-white/10 bg-[#0a0a0f]/95 shadow-2xl backdrop-blur-2xl",
+              "max-h-[85vh] p-5",
+              "sm:max-w-sm",
             )}
           >
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20 sm:hidden" />
             {content}
           </motion.div>
         </div>
