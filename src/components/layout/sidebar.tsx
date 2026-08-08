@@ -8,9 +8,6 @@ import {
   Home,
   Compass,
   Grid3X3,
-  Heart,
-  Download,
-  Bell,
   Sparkles,
   ChevronLeft,
   ChevronRight,
@@ -25,9 +22,6 @@ const quickLinks = [
   { label: "Browse", href: "/browse", icon: Compass },
   { label: "Categories", href: "/categories", icon: Grid3X3 },
   { label: "Studio", href: "/studio", icon: Sparkles },
-  { label: "Favorites", href: "/favorites", icon: Heart },
-  { label: "Downloads", href: "/downloads", icon: Download },
-  { label: "Notifications", href: "/notifications", icon: Bell },
 ];
 
 export function Sidebar({

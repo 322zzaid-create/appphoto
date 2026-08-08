@@ -66,6 +66,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} dark`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('apex-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light')}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-[#0a0a0f] text-white antialiased">
         <Providers>
           {children}

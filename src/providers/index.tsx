@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,8 +38,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {mounted ? children : <div className="min-h-screen bg-[#0a0a0f]" />}
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        {mounted ? children : <div className="min-h-screen bg-[#0a0a0f]" />}
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

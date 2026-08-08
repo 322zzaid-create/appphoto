@@ -3,7 +3,6 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Footer } from "@/components/layout/footer";
 
 export default function MainLayout({
   children,
@@ -20,7 +19,6 @@ export default function MainLayout({
         </div>
       </main>
       <MobileNav />
-      <Footer />
     </div>
   );
 }

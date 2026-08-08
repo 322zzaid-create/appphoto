@@ -72,7 +72,7 @@ export function WallpaperGrid({
     return (
       <div
         className={cn(
-          "grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+          "grid grid-cols-2 items-start gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
           className,
         )}
       >
@@ -85,7 +85,7 @@ export function WallpaperGrid({
 
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 items-start gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         <AnimatePresence mode="popLayout">
           {wallpapers.map((wp, i) => (
             <motion.div
@@ -109,7 +109,7 @@ export function WallpaperGrid({
       </div>
 
       {loading && wallpapers.length > 0 && (
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 items-start gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} variant="card" />
           ))}

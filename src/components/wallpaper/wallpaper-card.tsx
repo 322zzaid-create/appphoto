@@ -29,8 +29,7 @@ export function WallpaperCard({
   const [loaded, setLoaded] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
 
-  const aspectRatio = wallpaper.height / wallpaper.width;
-  const paddingPercent = (aspectRatio - 1) * 100;
+  const aspectRatio = `${wallpaper.width || 1080}/${wallpaper.height || 1920}`;
 
   const handleLike = useCallback(
     (e: React.MouseEvent) => {
@@ -77,7 +76,7 @@ export function WallpaperCard({
         >
           <div
             className="relative w-full overflow-hidden rounded-2xl bg-white/5"
-            style={{ paddingBottom: `${Math.max(60, Math.min(200, paddingPercent + 100))}%` }}
+            style={{ aspectRatio }}
           >
             {!loaded && (
               <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/[0.04] via-white/[0.08] to-white/[0.04]" />

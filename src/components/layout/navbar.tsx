@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { Bell, Menu, X } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Dropdown } from "@/components/ui/dropdown";
+import { SettingsSheet } from "@/components/settings/settings-sheet";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useSettings } from "@/lib/hooks/useSettings";
 
@@ -24,6 +25,7 @@ export function Navbar() {
   const { siteName } = useSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -91,14 +93,13 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {userProfile && (
-            <Link
-              href="/notifications"
-              className="relative rounded-lg p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <Bell className="h-5 w-5" />
-            </Link>
-          )}
+          <button
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Settings"
+            className="rounded-lg p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Settings className="h-5 w-5" />
+          </button>
 
           {userProfile ? (
             <Dropdown
@@ -169,6 +170,8 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </nav>
   );
 }

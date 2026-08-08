@@ -4,14 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { Home, Compass, Heart, Bell, Sparkles } from "lucide-react";
+import { Home, Compass, Sparkles } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/", icon: Home },
   { label: "Browse", href: "/browse", icon: Compass },
   { label: "Studio", href: "/studio", icon: Sparkles },
-  { label: "Favorites", href: "/favorites", icon: Heart },
-  { label: "Alerts", href: "/notifications", icon: Bell },
 ];
 
 export function MobileNav() {

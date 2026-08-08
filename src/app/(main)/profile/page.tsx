@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { PageHeader } from "@/components/layout/page-header";
@@ -104,25 +105,33 @@ export default function ProfilePage() {
           <p className="text-2xl font-bold text-white">{stats?.uploads ?? 0}</p>
           <p className="text-xs text-white/40">Uploads</p>
         </div>
-        <div className="glass-card p-4 text-center">
+        <Link
+          href="/downloads"
+          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
+        >
           <Download className="mx-auto mb-2 h-5 w-5 text-blue-400" />
           <p className="text-2xl font-bold text-white">{stats?.downloads ?? 0}</p>
           <p className="text-xs text-white/40">Downloads</p>
-        </div>
-        <div className="glass-card p-4 text-center">
+        </Link>
+        <Link
+          href="/favorites"
+          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
+        >
           <Heart className="mx-auto mb-2 h-5 w-5 text-red-400" />
           <p className="text-2xl font-bold text-white">{stats?.favorites ?? 0}</p>
           <p className="text-xs text-white/40">Favorites</p>
-        </div>
+        </Link>
       </div>
 
       <Tabs
         tabs={[
           { id: "uploads", label: "Uploads", icon: <Upload className="h-4 w-4" /> },
           { id: "favorites", label: "Favorites", icon: <Heart className="h-4 w-4" /> },
+          { id: "downloads", label: "Downloads", icon: <Download className="h-4 w-4" /> },
         ]}
         onChange={(id) => {
           if (id === "favorites") router.push("/favorites");
+          if (id === "downloads") router.push("/downloads");
         }}
       />
     </div>
