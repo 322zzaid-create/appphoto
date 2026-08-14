@@ -1,0 +1,91 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The static export cannot include Next route handlers or middleware,
+      # so they are removed for this build only. The app talks to the live
+      # deployment (see NEXT_PUBLIC_APP_URL) for the download endpoints.
+      - name: Remove server-only files for static export
+        run: |
+          rm -rf src/app/api
+          rm -f src/middleware.ts
+          rm -rf "src/app/(auth)/callback"
+          rm -rf src/app/admin
+
+      - name: Build static web export
+        env:
+          NEXT_EXPORT: 'true'
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.APP_URL || 'https://apexfiy-app.vercel.app' }}
+        run: npx next build --webpack
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Generate native app icon and splash from logo
+        run: npx capacitor-assets generate --android
+
+      - name: Register deep-link intent-filter
+        shell: bash
+        run: |
+          python3 - <<'PYEOF'
+          import re
+          path = 'android/app/src/main/AndroidManifest.xml'
+          with open(path) as f:
+              xml = f.read()
+          intent_filter = '''
+          <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <data android:scheme="com.zerotime.wallpaperhub" android:host="callback" />
+          </intent-filter>'''
+          pattern = re.compile(r'(<activity\b[^>]*?android:name="\.MainActivity"[^>]*?>)')
+          match = pattern.search(xml)
+          if not match:
+              raise SystemExit('MainActivity not found in manifest')
+          xml = xml.replace(match.group(1), match.group(1) + intent_filter, 1)
+          with open(path, 'w') as f:
+              f.write(xml)
+          PYEOF
+
+      - name: Sync web assets to Android
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apex-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk

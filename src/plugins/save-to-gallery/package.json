@@ -1,0 +1,14 @@
+{
+  "name": "save-to-gallery",
+  "version": "1.0.0",
+  "description": "Native Android plugin that saves images directly to the gallery using MediaStore",
+  "license": "MIT",
+  "files": [
+    "android"
+  ],
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  }
+}
