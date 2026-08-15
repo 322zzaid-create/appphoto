@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useStudio } from "@/lib/hooks/useStudio";
-import { PageHeader } from "@/components/layout/page-header";
+import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
@@ -23,6 +24,8 @@ import {
   XCircle,
   Trash2,
   Pencil,
+  ArrowRight,
+  Plus,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
@@ -50,6 +53,10 @@ export default function StudioPage() {
   const [editTags, setEditTags] = useState("");
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editCaption, setEditCaption] = useState("");
+  const [showAllWallpapers, setShowAllWallpapers] = useState(false);
+  const [showAllPosts, setShowAllPosts] = useState(false);
+  const [activeTab, setActiveTab] = useState<"wallpapers" | "posts">("wallpapers");
+  const [addOpen, setAddOpen] = useState(false);
 
   const supabase = createClient();
   const queryClient = useQueryClient();
@@ -312,86 +319,23 @@ export default function StudioPage() {
 
   return (
     <div>
-      <PageHeader
-        title={`Studio: ${studioName || user.username}`}
-        description="Manage your studio and upload wallpapers"
-        breadcrumbs={[
-          { label: "Studio", href: "/studio" },
-        ]}
-        actions={
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => setShowComposer(true)}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:shadow-blue-500/40"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              نشر بوست
-            </Button>
-            <Button
-              onClick={() => {
-                setUploadKey((k) => k + 1);
-                setShowUpload(true);
-              }}
-            >
-              <Upload className="mr-2 h-4 w-4" />
-              Upload Wallpaper
-            </Button>
-          </div>
-        }
-      />
-
-      <div className="mb-8 grid grid-cols-3 gap-4">
-        <div className="glass-card p-4 text-center">
-          <ImageIcon className="mx-auto mb-2 h-5 w-5 text-purple-400" />
-          <p className="text-2xl font-bold text-white">{stats?.uploads ?? 0}</p>
-          <p className="text-xs text-white/40">Uploads</p>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <Eye className="mx-auto mb-2 h-5 w-5 text-blue-400" />
-          <p className="text-2xl font-bold text-white">{stats?.views ?? 0}</p>
-          <p className="text-xs text-white/40">Views</p>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <Download className="mx-auto mb-2 h-5 w-5 text-green-400" />
-          <p className="text-2xl font-bold text-white">{stats?.downloads ?? 0}</p>
-          <p className="text-xs text-white/40">Downloads</p>
-        </div>
-      </div>
-
-      <Modal open={showUpload} onClose={() => setShowUpload(false)} size="lg">
-        <ModalHeader>
-          <h3 className="text-lg font-semibold text-white">Upload Wallpaper</h3>
-        </ModalHeader>
-        <ModalContent className="max-h-[80vh] overflow-y-auto">
-          <WallpaperUpload
-            key={uploadKey}
-            onComplete={() => {
-              setShowUpload(false);
-            }}
+      {/* Studio profile at the very top, without a surrounding box */}
+      <div className="mb-8 flex flex-col items-center text-center">
+        <div className="mb-4 shrink-0">
+          <Avatar
+            src={studioAvatarUrl}
+            name={studioName || user.username}
+            size="xl"
           />
-        </ModalContent>
-      </Modal>
-
-      <div className="glass-card mb-8 flex items-center justify-between gap-3 p-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/10">
-            <Avatar
-              src={studioAvatarUrl}
-              name={studioName || user.username}
-              size="md"
-            />
-          </div>
-          <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold text-white">
-              {studioName || user.username}
-            </h3>
-            <p className="text-xs text-white/40">Studio Profile</p>
-          </div>
         </div>
+        <h3 className="text-2xl font-bold text-white">
+          {studioName || user.username}
+        </h3>
+        <p className="mt-1 text-sm text-white/40">Studio Profile</p>
         <Button
           variant="secondary"
           size="sm"
-          className="shrink-0"
+          className="mt-4"
           onClick={() => {
             setShowProfileEdit(true);
             setProfileEditKey((k) => k + 1);
@@ -412,144 +356,304 @@ export default function StudioPage() {
         onClose={() => setShowProfileEdit(false)}
       />
 
-      <div className="glass-card p-6">
-        <h3 className="mb-4 text-lg font-semibold text-white">Your Wallpapers</h3>
-        {wallpapersLoading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
-            ))}
-          </div>
-        ) : !myWallpapers || myWallpapers.length === 0 ? (
-          <p className="text-sm text-white/40">
-            No wallpapers uploaded yet. Click &quot;Upload Wallpaper&quot; to get started.
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {myWallpapers.map((wp) => (
-              <div key={wp.id} className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
-                <Link href={`/wallpaper/${wp.id}`}>
-                  <div className="aspect-[3/4] w-full">
-                    <img
-                      src={wp.thumbnail_url || wp.preview_url || ""}
-                      alt={wp.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                </Link>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-                  <p className="text-xs font-medium text-white line-clamp-1">{wp.title}</p>
-                  <div className="mt-1 flex items-center gap-3 text-[10px] text-white/40">
-                    <span className="flex items-center gap-0.5">
-                      <Eye className="h-2.5 w-2.5" /> {wp.view_count ?? 0}
-                    </span>
-                    <span className="flex items-center gap-0.5">
-                      <Download className="h-2.5 w-2.5" /> {wp.download_count ?? 0}
-                    </span>
-                    <span className="flex items-center gap-0.5">
-                      <Heart className="h-2.5 w-2.5" /> {wp.like_count ?? 0}
-                    </span>
-                  </div>
-                </div>
-                <div className="absolute right-2 top-2">
-                  <Badge color={wp.status === "published" ? "green" : wp.status === "draft" ? "yellow" : "default"}>
-                    {wp.status}
-                  </Badge>
-                </div>
-                <div className="absolute left-2 top-2 flex gap-1 md:opacity-0 md:transition-all md:group-hover:opacity-100">
-                  <button
-                    onClick={() => openEdit(wp)}
-                    className="rounded-lg bg-black/60 p-1.5 text-white/50 hover:bg-blue-500/80 hover:text-white"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm("Delete this wallpaper?")) {
-                        deleteMutation.mutate(wp.id);
-                      }
-                    }}
-                    className="rounded-lg bg-black/60 p-1.5 text-white/50 hover:bg-red-500/80 hover:text-white"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* Stats squares */}
+      <div className="mb-8 grid grid-cols-3 gap-4">
+        <Link
+          href={`/studio/${user.username}`}
+          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
+        >
+          <Download className="mx-auto mb-2 h-5 w-5 text-green-400" />
+          <p className="text-2xl font-bold text-white">{stats?.downloads ?? 0}</p>
+          <p className="text-xs text-white/40">Downloads</p>
+        </Link>
+        <div className="glass-card p-4 text-center">
+          <Eye className="mx-auto mb-2 h-5 w-5 text-blue-400" />
+          <p className="text-2xl font-bold text-white">{stats?.views ?? 0}</p>
+          <p className="text-xs text-white/40">Views</p>
+        </div>
+        <Link
+          href={`/studio/${user.username}`}
+          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
+        >
+          <ImageIcon className="mx-auto mb-2 h-5 w-5 text-purple-400" />
+          <p className="text-2xl font-bold text-white">{stats?.uploads ?? 0}</p>
+          <p className="text-xs text-white/40">Uploads</p>
+        </Link>
       </div>
 
-      <div className="glass-card mb-8 p-6">
-        <h3 className="mb-4 text-lg font-semibold text-white">Your Posts</h3>
-        {postsLoading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
-            ))}
+      <Modal open={showUpload} onClose={() => setShowUpload(false)} size="lg">
+        <ModalHeader>
+          <h3 className="text-lg font-semibold text-white">Upload Wallpaper</h3>
+        </ModalHeader>
+        <ModalContent className="max-h-[80vh] overflow-y-auto">
+          <WallpaperUpload
+            key={uploadKey}
+            onComplete={() => {
+              setShowUpload(false);
+            }}
+          />
+        </ModalContent>
+      </Modal>
+
+      {/* Panel: section tabs with the center add button */}
+      <div className="glass-card mb-8 overflow-hidden">
+        <div className="flex items-stretch border-b border-white/10">
+          <button
+            onClick={() => setActiveTab("wallpapers")}
+            className={cn(
+              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              activeTab === "wallpapers"
+                ? "bg-white/5 text-white"
+                : "text-white/40 hover:text-white/70",
+            )}
+          >
+            Your Wallpapers
+          </button>
+          <div className="relative flex w-14 shrink-0 items-center justify-center">
+            {status === "approved" && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.15 }}
+                onClick={() => setAddOpen((v) => !v)}
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-full text-white transition-all duration-300",
+                  "bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-500/30",
+                  addOpen && "rotate-45",
+                )}
+                title={addOpen ? "Close" : "Add"}
+              >
+                <Plus className="h-5 w-5" />
+              </motion.button>
+            )}
           </div>
-        ) : !myPosts || myPosts.length === 0 ? (
-          <p className="text-sm text-white/40">
-            No posts yet. Click &quot;نشر بوست&quot; to publish your first post.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {myPosts.map((post) => (
-              <div key={post.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                <Link href={`/posts`} className="flex shrink-0 gap-1">
-                  {(post.images ?? []).slice(0, 3).map((img) => (
-                    <div
-                      key={img.id}
-                      className="h-12 w-12 overflow-hidden rounded-lg border border-white/10"
-                    >
-                      <img
-                        src={img.wallpaper?.thumbnail_url || img.wallpaper?.preview_url || ""}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
+          <button
+            onClick={() => setActiveTab("posts")}
+            className={cn(
+              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              activeTab === "posts"
+                ? "bg-white/5 text-white"
+                : "text-white/40 hover:text-white/70",
+            )}
+          >
+            Your Posts
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {addOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="overflow-hidden border-b border-white/10"
+            >
+              <div className="flex items-center justify-center gap-2 p-3">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setAddOpen(false);
+                    setUploadKey((k) => k + 1);
+                    setShowUpload(true);
+                  }}
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  Upload Wallpaper
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25"
+                  onClick={() => {
+                    setAddOpen(false);
+                    setShowComposer(true);
+                  }}
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  نشر بوست
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="p-5">
+          {activeTab === "wallpapers" ? (
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-xs text-white/40">
+                  {myWallpapers?.length ?? 0}{" "}
+                  {myWallpapers?.length === 1 ? "wallpaper" : "wallpapers"}
+                </p>
+                {myWallpapers && myWallpapers.length > 2 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllWallpapers((v) => !v)}
+                  >
+                    {showAllWallpapers ? "Show Less" : "View All"}
+                    <ArrowRight
+                      className={`ml-1.5 h-3.5 w-3.5 transition-transform ${showAllWallpapers ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                )}
+              </div>
+              {wallpapersLoading ? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
+                  ))}
+                </div>
+              ) : !myWallpapers || myWallpapers.length === 0 ? (
+                <p className="text-sm text-white/40">
+                  No wallpapers uploaded yet. Tap the &quot;+&quot; button to upload.
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                  {myWallpapers.slice(0, showAllWallpapers ? undefined : 2).map((wp) => (
+                    <div key={wp.id} className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                      <Link href={`/wallpaper/${wp.id}`}>
+                        <div className="aspect-[3/4] w-full">
+                          <img
+                            src={wp.thumbnail_url || wp.preview_url || ""}
+                            alt={wp.title}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+                      </Link>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                        <p className="text-xs font-medium text-white line-clamp-1">{wp.title}</p>
+                        <div className="mt-1 flex items-center gap-3 text-[10px] text-white/40">
+                          <span className="flex items-center gap-0.5">
+                            <Eye className="h-2.5 w-2.5" /> {wp.view_count ?? 0}
+                          </span>
+                          <span className="flex items-center gap-0.5">
+                            <Download className="h-2.5 w-2.5" /> {wp.download_count ?? 0}
+                          </span>
+                          <span className="flex items-center gap-0.5">
+                            <Heart className="h-2.5 w-2.5" /> {wp.like_count ?? 0}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="absolute right-2 top-2">
+                        <Badge color={wp.status === "published" ? "green" : wp.status === "draft" ? "yellow" : "default"}>
+                          {wp.status}
+                        </Badge>
+                      </div>
+                      <div className="absolute left-2 top-2 flex gap-1 md:opacity-0 md:transition-all md:group-hover:opacity-100">
+                        <button
+                          onClick={() => openEdit(wp)}
+                          className="rounded-lg bg-black/60 p-1.5 text-white/50 hover:bg-blue-500/80 hover:text-white"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm("Delete this wallpaper?")) {
+                              deleteMutation.mutate(wp.id);
+                            }
+                          }}
+                          className="rounded-lg bg-black/60 p-1.5 text-white/50 hover:bg-red-500/80 hover:text-white"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
-                  {(post.images?.length ?? 0) > 3 && (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black/40 text-xs font-semibold text-white">
-                      +{(post.images?.length ?? 0) - 3}
-                    </div>
-                  )}
-                </Link>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-white">
-                    {post.caption || "No caption"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-white/40">
-                    {(post.images?.length ?? 0)} images · {post.like_count ?? 0} likes · {post.save_count ?? 0} saves
-                  </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <button
-                    onClick={() => {
-                      setEditingPost(post);
-                      setEditCaption(post.caption ?? "");
-                    }}
-                    className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-blue-500/80 hover:text-white"
-                    title="Edit post"
+              )}
+            </>
+          ) : (
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-xs text-white/40">
+                  {myPosts?.length ?? 0} {myPosts?.length === 1 ? "post" : "posts"}
+                </p>
+                {myPosts && myPosts.length > 2 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllPosts((v) => !v)}
                   >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm("Delete this post?")) {
-                        deletePostMutation.mutate(post.id);
-                      }
-                    }}
-                    className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-red-500/80 hover:text-white"
-                    title="Delete post"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                    {showAllPosts ? "Show Less" : "View All"}
+                    <ArrowRight
+                      className={`ml-1.5 h-3.5 w-3.5 transition-transform ${showAllPosts ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                )}
               </div>
-            ))}
-          </div>
-        )}
+              {postsLoading ? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
+                  ))}
+                </div>
+              ) : !myPosts || myPosts.length === 0 ? (
+                <p className="text-sm text-white/40">
+                  No posts yet. Tap the &quot;+&quot; button to publish your first post.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {myPosts.slice(0, showAllPosts ? undefined : 2).map((post) => (
+                    <div key={post.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                      <Link href={`/posts`} className="flex shrink-0 gap-1">
+                        {(post.images ?? []).slice(0, 3).map((img) => (
+                          <div
+                            key={img.id}
+                            className="h-12 w-12 overflow-hidden rounded-lg border border-white/10"
+                          >
+                            <img
+                              src={img.wallpaper?.thumbnail_url || img.wallpaper?.preview_url || ""}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ))}
+                        {(post.images?.length ?? 0) > 3 && (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black/40 text-xs font-semibold text-white">
+                            +{(post.images?.length ?? 0) - 3}
+                          </div>
+                        )}
+                      </Link>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-white">
+                          {post.caption || "No caption"}
+                        </p>
+                        <p className="mt-0.5 text-xs text-white/40">
+                          {(post.images?.length ?? 0)} images · {post.like_count ?? 0} likes · {post.save_count ?? 0} saves
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        <button
+                          onClick={() => {
+                            setEditingPost(post);
+                            setEditCaption(post.caption ?? "");
+                          }}
+                          className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-blue-500/80 hover:text-white"
+                          title="Edit post"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm("Delete this post?")) {
+                              deletePostMutation.mutate(post.id);
+                            }
+                          }}
+                          className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-red-500/80 hover:text-white"
+                          title="Delete post"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       <div className="pt-2">

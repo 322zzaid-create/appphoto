@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FeaturedSection } from "@/components/wallpaper/featured-section";
 import { BannerAd } from "@/components/ads/banner-ad";
 import { PullToRefresh } from "@/components/ui/pull-to-refresh";
@@ -82,6 +82,24 @@ export function HomeContent({
       // Keep current content if the refresh fails (offline, etc.)
     }
   }, [refetch]);
+
+  // Tell the navbar when the filter bar has reached its sticky point, so it
+  // can slide away on continued downward scroll.
+  const filterBarRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = filterBarRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const stuck = el.getBoundingClientRect().top <= 60;
+      document.documentElement.dataset.filterStuck = stuck ? "1" : "0";
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      delete document.documentElement.dataset.filterStuck;
+    };
+  }, []);
 
   const featured = useMemo(() => {
     return shuffleWithSeed(data?.featured ?? [], seed);
@@ -176,7 +194,10 @@ export function HomeContent({
         )}
 
         <section className="space-y-5">
-          <div className="sticky top-[calc(2.75rem+env(safe-area-inset-top))] z-30 -mx-4 border-b border-white/10 bg-[#0a0a0f]/80 px-4 py-2.5 backdrop-blur-2xl sm:-mx-6 sm:px-6 md:top-[calc(3rem+env(safe-area-inset-top))]">
+          <div
+            ref={filterBarRef}
+            className="filter-sticky sticky z-30 -mx-4 border-b border-white/10 bg-[#0a0a0f]/80 px-4 py-2.5 backdrop-blur-2xl sm:-mx-6 sm:px-6"
+          >
             <HomeFilterTabs active={filter} onChange={setFilter} />
           </div>
 

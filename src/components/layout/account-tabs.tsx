@@ -18,7 +18,7 @@ interface AccountTabsProps {
 
 export function AccountTabs({ active, onChange }: AccountTabsProps) {
   return (
-    <div className="relative z-[60] -mt-6">
+    <div className="relative z-30 -mt-6 -mx-4 border-b border-white/10 bg-[#0a0a0f]/80 px-4 py-2.5 backdrop-blur-2xl sm:-mx-6 sm:px-6">
       <div className="mx-auto max-w-md">
         <div className="relative flex">
           {tabs.map((tab) => {
@@ -39,7 +39,7 @@ export function AccountTabs({ active, onChange }: AccountTabsProps) {
                   <motion.span
                     layoutId="account-tab-pill"
                     transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                    className="absolute inset-x-0 -top-2 bottom-0 rounded-b-2xl border border-t-0 border-white/10 bg-[#0a0a0f] shadow-[0_12px_28px_-12px_rgba(0,0,0,0.9)]"
+                    className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500/25 to-blue-500/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] ring-1 ring-white/10"
                   />
                 )}
 

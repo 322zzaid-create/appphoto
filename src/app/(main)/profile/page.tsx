@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { Upload, Heart, Download, Shield, Sparkles } from "lucide-react";
+import { Heart, Download, Shield, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { InlineAd } from "@/components/ads/inline-ad";
@@ -93,15 +93,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-3">
-        <Link
-          href={`/studio/${user.username}`}
-          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
-        >
-          <Upload className="mx-auto mb-2 h-5 w-5 text-purple-400" />
-          <p className="text-2xl font-bold text-white">{stats?.uploads ?? 0}</p>
-          <p className="text-xs text-white/40">Uploads</p>
-        </Link>
+      <div className="mb-8 grid grid-cols-2 gap-4">
         <Link
           href="/downloads"
           className="glass-card p-4 text-center transition-colors hover:bg-white/10"

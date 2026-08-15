@@ -232,6 +232,32 @@ html.light .nav-fade {
   );
 }
 
+/* Sticky home filter bar: sticks under the navbar, or at the very top when
+   the navbar has slid away (html.nav-hidden). */
+.filter-sticky {
+  top: calc(2.75rem + env(safe-area-inset-top));
+}
+
+html.nav-hidden .filter-sticky {
+  top: 0;
+}
+
+@media (min-width: 768px) {
+  .filter-sticky {
+    top: calc(3rem + env(safe-area-inset-top));
+  }
+
+  html.nav-hidden .filter-sticky {
+    top: 0;
+  }
+}
+
+/* Navbar slides up out of view once the home filter bar is stuck and the
+   user keeps scrolling down; it returns when scrolling back up. */
+html.nav-hidden .app-nav {
+  transform: translateY(-100%);
+}
+
 /* Full-bleed horizontal scroller with iOS-style snap + hidden scrollbar. */
 .scroll-snap-x {
   scroll-snap-type: x mandatory;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
@@ -21,21 +21,47 @@ export function Navbar() {
   const { siteName } = useSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const lastY = useRef(0);
+  const mobileOpenRef = useRef(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
+    mobileOpenRef.current = mobileOpen;
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 10);
+      // The home filter bar marks itself as stuck (via dataset.filterStuck)
+      // once it reaches the bottom of the navbar.
+      const filterStuck = document.documentElement.dataset.filterStuck === "1";
+      if (!mobileOpenRef.current && y > 80 && y > lastY.current + 4 && filterStuck) {
+        setHidden(true);
+      } else if (y < lastY.current - 4 || y <= 10) {
+        setHidden(false);
+      }
+      lastY.current = y;
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("nav-hidden", hidden);
+    return () => document.documentElement.classList.remove("nav-hidden");
+  }, [hidden]);
 
   return (
     <>
       <nav
         className={cn(
-          "fixed inset-x-0 top-0 z-50 border-b pt-safe transition-all duration-300",
+          "app-nav fixed inset-x-0 top-0 z-50 border-b pt-safe transition-transform duration-300",
           "border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl",
           scrolled && "shadow-lg",
+          hidden && "-translate-y-full",
         )}
       >
         <div className="relative mx-auto flex h-11 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-12">
