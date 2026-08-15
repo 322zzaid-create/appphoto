@@ -1,24 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { PageHeader } from "@/components/layout/page-header";
-import { Button } from "@/components/ui/button";
 import { PostCard } from "@/components/posts/post-card";
-import { PostComposer } from "@/components/posts/post-composer";
 import { usePosts } from "@/lib/hooks/usePosts";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useStudio } from "@/lib/hooks/useStudio";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, Loader2, Newspaper } from "lucide-react";
-import { toast } from "@/lib/utils/toast";
+import { Loader2, Newspaper } from "lucide-react";
 
 export default function PostsPage() {
-  const router = useRouter();
   const { user } = useAuth();
-  const { status: studioStatus } = useStudio();
-  const [composerOpen, setComposerOpen] = useState(false);
   const {
     posts,
     isLoading,
@@ -41,33 +33,12 @@ export default function PostsPage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const openComposer = useCallback(() => {
-    if (!user) {
-      router.push("/login?redirect=/posts");
-      return;
-    }
-    if (studioStatus !== "approved") {
-      toast.error("Only approved studio creators can publish posts");
-      return;
-    }
-    setComposerOpen(true);
-  }, [user, studioStatus, router]);
-
   return (
     <div>
       <PageHeader
         title="Posts"
         description="Latest posts from studios"
         breadcrumbs={[{ label: "Posts", href: "/posts" }]}
-        actions={
-          <Button
-            onClick={openComposer}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:shadow-blue-500/40"
-          >
-            <Sparkles className="mr-2 h-4 w-4" />
-            نشر بوست
-          </Button>
-        }
       />
 
       <div className="mx-auto max-w-2xl space-y-6">
@@ -100,15 +71,8 @@ export default function PostsPage() {
             </div>
             <h3 className="text-lg font-semibold text-white">No posts yet</h3>
             <p className="mt-1 max-w-sm text-sm text-white/40">
-              Studios share their work here. Be the first to publish a post!
+              Posts from studios will appear here.
             </p>
-            <Button
-              className="mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:shadow-blue-500/40"
-              onClick={openComposer}
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              نشر بوست
-            </Button>
           </div>
         ) : (
           <>
@@ -147,8 +111,6 @@ export default function PostsPage() {
           </>
         )}
       </div>
-
-      <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} />
     </div>
   );
 }

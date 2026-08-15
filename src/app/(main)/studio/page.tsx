@@ -11,6 +11,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { InlineAd } from "@/components/ads/inline-ad";
 import { WallpaperUpload } from "@/components/admin/wallpaper-upload";
 import { StudioProfileSettings } from "@/components/studio/studio-profile-settings";
+import { PostComposer } from "@/components/posts/post-composer";
 import {
   Sparkles,
   Upload,
@@ -26,17 +27,20 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { wallpaperService } from "@/lib/services/wallpaper.service";
+import { postService } from "@/lib/services/post.service";
 import { Modal, ModalHeader, ModalContent, ModalFooter } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { CATEGORIES } from "@/lib/constants";
 import Link from "next/link";
 import { toast } from "@/lib/utils/toast";
+import type { Post } from "@/types";
 
 export default function StudioPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
   const { status, studioName, studioDescription, studioAvatarUrl, application, isLoading: studioLoading } = useStudio();  const [showUpload, setShowUpload] = useState(false);
   const [uploadKey, setUploadKey] = useState(0);
+  const [showComposer, setShowComposer] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [profileEditKey, setProfileEditKey] = useState(0);
   const [editingWp, setEditingWp] = useState<{ id: string; title: string; description: string; categories: { name: string; slug: string }[]; tags: { name: string; slug: string }[] } | null>(null);
@@ -44,6 +48,8 @@ export default function StudioPage() {
   const [editDescription, setEditDescription] = useState("");
   const [editCategories, setEditCategories] = useState<string[]>([]);
   const [editTags, setEditTags] = useState("");
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [editCaption, setEditCaption] = useState("");
 
   const supabase = createClient();
   const queryClient = useQueryClient();
@@ -61,6 +67,47 @@ export default function StudioPage() {
       return data ?? [];
     },
     enabled: !!user && status === "approved",
+  });
+
+  const { data: myPosts, isLoading: postsLoading } = useQuery({
+    queryKey: ["studio-my-posts", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return postService.fetchMyPosts(user.id);
+    },
+    enabled: !!user && status === "approved",
+  });
+
+  const deletePostMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      const result = await postService.deletePost(postId);
+      if (!result.success) throw new Error(result.error || "Failed to delete post");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studio-my-posts", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["posts-feed"] });
+      toast.success("Post deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete post");
+    },
+  });
+
+  const updatePostMutation = useMutation({
+    mutationFn: async () => {
+      if (!editingPost) throw new Error("No post selected");
+      const result = await postService.updatePostCaption(editingPost.id, editCaption);
+      if (!result.success) throw new Error(result.error || "Failed to update post");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studio-my-posts", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["posts-feed"] });
+      setEditingPost(null);
+      toast.success("Post updated");
+    },
+    onError: () => {
+      toast.error("Failed to update post");
+    },
   });
 
   const deleteMutation = useMutation({
@@ -272,15 +319,24 @@ export default function StudioPage() {
           { label: "Studio", href: "/studio" },
         ]}
         actions={
-          <Button
-            onClick={() => {
-              setUploadKey((k) => k + 1);
-              setShowUpload(true);
-            }}
-          >
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Wallpaper
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setShowComposer(true)}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:shadow-blue-500/40"
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              نشر بوست
+            </Button>
+            <Button
+              onClick={() => {
+                setUploadKey((k) => k + 1);
+                setShowUpload(true);
+              }}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Wallpaper
+            </Button>
+          </div>
         }
       />
 
@@ -424,6 +480,78 @@ export default function StudioPage() {
         )}
       </div>
 
+      <div className="glass-card mb-8 p-6">
+        <h3 className="mb-4 text-lg font-semibold text-white">Your Posts</h3>
+        {postsLoading ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
+            ))}
+          </div>
+        ) : !myPosts || myPosts.length === 0 ? (
+          <p className="text-sm text-white/40">
+            No posts yet. Click &quot;نشر بوست&quot; to publish your first post.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {myPosts.map((post) => (
+              <div key={post.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                <Link href={`/posts`} className="flex shrink-0 gap-1">
+                  {(post.images ?? []).slice(0, 3).map((img) => (
+                    <div
+                      key={img.id}
+                      className="h-12 w-12 overflow-hidden rounded-lg border border-white/10"
+                    >
+                      <img
+                        src={img.wallpaper?.thumbnail_url || img.wallpaper?.preview_url || ""}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ))}
+                  {(post.images?.length ?? 0) > 3 && (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black/40 text-xs font-semibold text-white">
+                      +{(post.images?.length ?? 0) - 3}
+                    </div>
+                  )}
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-white">
+                    {post.caption || "No caption"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-white/40">
+                    {(post.images?.length ?? 0)} images · {post.like_count ?? 0} likes · {post.save_count ?? 0} saves
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    onClick={() => {
+                      setEditingPost(post);
+                      setEditCaption(post.caption ?? "");
+                    }}
+                    className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-blue-500/80 hover:text-white"
+                    title="Edit post"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm("Delete this post?")) {
+                        deletePostMutation.mutate(post.id);
+                      }
+                    }}
+                    className="rounded-lg bg-white/5 p-2 text-white/50 transition-colors hover:bg-red-500/80 hover:text-white"
+                    title="Delete post"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="pt-2">
         <InlineAd boxClassName="aspect-[6/5] max-w-[300px] mx-auto" />
       </div>
@@ -492,6 +620,42 @@ export default function StudioPage() {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <Modal open={!!editingPost} onClose={() => setEditingPost(null)}>
+        <ModalHeader>
+          <h3 className="text-lg font-semibold text-white">Edit Post</h3>
+        </ModalHeader>
+        <ModalContent className="space-y-4">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-white/80">Caption</label>
+            <textarea
+              value={editCaption}
+              onChange={(e) => setEditCaption(e.target.value)}
+              placeholder="Post caption"
+              rows={4}
+              className="flex w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 backdrop-blur-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 hover:border-white/20"
+            />
+          </div>
+          {editingPost && (editingPost.images?.length ?? 0) > 0 && (
+            <p className="text-xs text-white/40">
+              {editingPost.images?.length} image(s) in this post. Wallpapers are managed from &quot;Your Wallpapers&quot;.
+            </p>
+          )}
+        </ModalContent>
+        <ModalFooter>
+          <Button variant="ghost" onClick={() => setEditingPost(null)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => updatePostMutation.mutate()}
+            disabled={updatePostMutation.isPending}
+          >
+            {updatePostMutation.isPending ? "Saving..." : "Save Changes"}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      <PostComposer open={showComposer} onClose={() => setShowComposer(false)} />
     </div>
   );
 }

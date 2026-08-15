@@ -34,7 +34,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] w-60 border-r border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl lg:block",
+        "fixed left-0 top-12 z-40 hidden h-[calc(100vh-3rem)] w-60 border-r border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl lg:block",
         className,
       )}
     >

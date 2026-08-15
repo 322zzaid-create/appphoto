@@ -13,7 +13,7 @@ export default function MainLayout({
     <div className="app-bg min-h-screen">
       <Navbar />
       <Sidebar />
-      <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] lg:pl-[260px] pb-28 lg:pb-0">
+      <main className="pt-[calc(2.75rem+env(safe-area-inset-top))] md:pt-[calc(3rem+env(safe-area-inset-top))] lg:pl-[260px] pb-28 lg:pb-0">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
           {children}
         </div>

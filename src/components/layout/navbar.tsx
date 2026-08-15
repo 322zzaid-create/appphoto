@@ -38,32 +38,32 @@ export function Navbar() {
           scrolled && "shadow-lg",
         )}
       >
-        <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-16">
+        <div className="relative mx-auto flex h-11 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-12">
           {/* Left: Search */}
-          <div className="flex w-11 items-center md:w-14">
+          <div className="flex w-9 items-center md:w-11">
             <Link
               href="/search"
               aria-label="Search"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
             >
               <Search className="h-4 w-4" />
             </Link>
           </div>
 
           {/* Center: Logo + name */}
-          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-purple-500 to-blue-500">
               <img src="/logo.jpg" alt="Logo" className="h-full w-full object-cover" />
             </div>
-            <span className="text-lg font-bold text-white">{siteName}</span>
+            <span className="text-base font-bold text-white">{siteName}</span>
           </div>
 
           {/* Right: Menu */}
-          <div className="flex w-11 items-center justify-end md:w-14">
+          <div className="flex w-9 items-center justify-end md:w-11">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Menu"
-              className="rounded-lg p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>

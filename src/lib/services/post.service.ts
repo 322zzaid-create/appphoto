@@ -171,4 +171,59 @@ export const postService = {
 
     return { data: visible, count: count ?? 0 }
   },
+
+  async fetchMyPosts(userId: string): Promise<Post[]> {
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('posts')
+      .select(
+        `
+        *,
+        user:profiles!posts_user_id_fkey(
+          username, full_name, avatar_url,
+          studio_name, studio_avatar_url
+        ),
+        images:post_images(
+          position,
+          wallpaper:wallpapers(*)
+        )
+      `,
+      )
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return ((data ?? []) as Post[]).map((post) => ({
+      ...post,
+      images: [...(post.images ?? [])]
+        .sort((a, b) => toNumber(a.position) - toNumber(b.position))
+        .filter((img: PostImage) => img.wallpaper) as PostImage[],
+    }))
+  },
+
+  async updatePostCaption(
+    postId: string,
+    caption: string,
+  ): Promise<{ success: boolean; error?: string }> {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('posts')
+      .update({ caption: caption.trim() })
+      .eq('id', postId)
+    if (error) return { success: false, error: error.message }
+    return { success: true }
+  },
+
+  async deletePost(
+    postId: string,
+  ): Promise<{ success: boolean; error?: string }> {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId)
+    if (error) return { success: false, error: error.message }
+    return { success: true }
+  },
 }

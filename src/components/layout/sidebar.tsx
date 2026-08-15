@@ -35,7 +35,7 @@ export function Sidebar({
     <motion.aside
       animate={{ width: isCollapsed ? 68 : 260 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl lg:block"
+      className="fixed left-0 top-12 z-40 hidden h-[calc(100vh-3rem)] border-r border-white/10 bg-[#0a0a0f]/80 backdrop-blur-2xl lg:block"
     >
       <div className="flex h-full flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-3 py-4">

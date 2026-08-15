@@ -176,7 +176,9 @@ export function HomeContent({
         )}
 
         <section className="space-y-5">
-          <HomeFilterTabs active={filter} onChange={setFilter} />
+          <div className="sticky top-[calc(2.75rem+env(safe-area-inset-top))] z-30 -mx-4 border-b border-white/10 bg-[#0a0a0f]/80 px-4 py-2.5 backdrop-blur-2xl sm:-mx-6 sm:px-6 md:top-[calc(3rem+env(safe-area-inset-top))]">
+            <HomeFilterTabs active={filter} onChange={setFilter} />
+          </div>
 
           {wallpapers.length > 0 || (isLoading && !data) ? (
             <WallpaperGrid

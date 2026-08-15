@@ -31,7 +31,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-safe">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 nav-fade" />
       <div className="relative mb-6 flex items-center gap-1 rounded-full bg-[#0d0d16]/90 p-1.5 shadow-tabbar backdrop-blur-2xl">
         {navItems.map((item) => {
           const Icon = item.icon;

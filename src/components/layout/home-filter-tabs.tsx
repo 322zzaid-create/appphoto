@@ -21,7 +21,7 @@ interface HomeFilterTabsProps {
 export function HomeFilterTabs({ active, onChange }: HomeFilterTabsProps) {
   return (
     <div className="mx-auto max-w-lg">
-      <div className="relative flex rounded-2xl border border-white/10 bg-[#0a0a0f]/70 p-1.5 shadow-tabbar backdrop-blur-xl">
+      <div className="relative flex">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = active === tab.id;

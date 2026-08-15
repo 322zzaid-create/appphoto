@@ -18,11 +18,9 @@ interface AccountTabsProps {
 
 export function AccountTabs({ active, onChange }: AccountTabsProps) {
   return (
-    <div className="relative z-10 -mt-6">
+    <div className="relative z-[60] -mt-6">
       <div className="mx-auto max-w-md">
         <div className="relative flex">
-          <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
-
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = active === tab.id;
@@ -32,7 +30,7 @@ export function AccountTabs({ active, onChange }: AccountTabsProps) {
                 key={tab.id}
                 onClick={() => onChange(tab.id)}
                 className={cn(
-                  "relative flex flex-1 items-center justify-center gap-2 px-4 py-4 text-sm font-semibold transition-colors duration-300",
+                  "relative flex flex-1 items-center justify-center gap-2 px-4 py-2 text-sm font-semibold transition-colors duration-300",
                   "active:scale-[0.97]",
                   isActive ? "text-white" : "text-white/45 hover:text-white/75",
                 )}
@@ -41,7 +39,7 @@ export function AccountTabs({ active, onChange }: AccountTabsProps) {
                   <motion.span
                     layoutId="account-tab-pill"
                     transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                    className="absolute inset-0 rounded-b-2xl bg-[#0a0a0f]/95 shadow-[0_12px_28px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/10 backdrop-blur-xl"
+                    className="absolute inset-x-0 -top-2 bottom-0 rounded-b-2xl border border-t-0 border-white/10 bg-[#0a0a0f] shadow-[0_12px_28px_-12px_rgba(0,0,0,0.9)]"
                   />
                 )}
 

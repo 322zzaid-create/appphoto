@@ -31,7 +31,7 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-[#0a0a0f]">
       <Navbar />
       <AdminSidebar />
-      <main className="pt-16 pl-0 lg:pl-60">
+      <main className="pt-[3rem] pl-0 lg:pl-60">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">{children}</div>
       </main>
     </div>
