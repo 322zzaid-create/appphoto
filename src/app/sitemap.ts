@@ -8,6 +8,7 @@ const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://wallpaperhub.app";
 const staticRoutes: MetadataRoute.Sitemap = [
   { url: `${base}/`, changeFrequency: "daily", priority: 1 },
   { url: `${base}/browse`, changeFrequency: "daily", priority: 0.9 },
+  { url: `${base}/posts`, changeFrequency: "daily", priority: 0.9 },
   { url: `${base}/categories`, changeFrequency: "weekly", priority: 0.8 },
   { url: `${base}/search`, changeFrequency: "weekly", priority: 0.6 },
   { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },

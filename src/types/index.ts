@@ -267,6 +267,44 @@ export interface Rating {
   updated_at: string
 }
 
+export interface Post {
+  id: string
+  user_id: string
+  caption: string
+  like_count: number
+  save_count: number
+  image_count: number
+  created_at: string
+  updated_at: string
+  // Joined fields
+  user?: Profile
+  images?: PostImage[]
+}
+
+export interface PostImage {
+  id: string
+  post_id: string
+  wallpaper_id: string
+  position: number
+  created_at: string
+  // Joined fields
+  wallpaper?: Wallpaper
+}
+
+export interface PostLike {
+  id: string
+  user_id: string
+  post_id: string
+  created_at: string
+}
+
+export interface PostSave {
+  id: string
+  user_id: string
+  post_id: string
+  created_at: string
+}
+
 // Filter types
 export interface WallpaperFilters {
   device_type?: DeviceType | 'all'
