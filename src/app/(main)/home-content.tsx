@@ -90,7 +90,10 @@ export function HomeContent({
     const el = filterBarRef.current;
     if (!el) return;
     const onScroll = () => {
-      const stuck = el.getBoundingClientRect().top <= 60;
+      // Compare against the bar's resolved sticky top (which includes the
+      // safe-area inset), so it also works on notched phones.
+      const styleTop = parseFloat(getComputedStyle(el).top) || 0;
+      const stuck = el.getBoundingClientRect().top <= styleTop + 1;
       document.documentElement.dataset.filterStuck = stuck ? "1" : "0";
     };
     onScroll();
