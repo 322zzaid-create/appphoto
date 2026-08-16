@@ -135,7 +135,7 @@ function BrowseContent() {
                 favoriteIds={favoriteIds}
                 onFavorite={(id) => {
                   if (!user) {
-                    toast.error("Please login to add favorites");
+                    toast.error("Please login to save");
                     return;
                   }
                   toggleFavorite(id);

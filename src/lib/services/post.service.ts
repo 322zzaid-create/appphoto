@@ -172,6 +172,42 @@ export const postService = {
     return { data: visible, count: count ?? 0 }
   },
 
+  async fetchSavedPosts(userId: string): Promise<Post[]> {
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('post_saves')
+      .select(
+        `
+        *,
+        post:posts!post_saves_post_id_fkey(
+          *,
+          user:profiles!posts_user_id_fkey(
+            username, full_name, avatar_url,
+            studio_name, studio_avatar_url
+          ),
+          images:post_images(
+            position,
+            wallpaper:wallpapers(*)
+          )
+        )
+      `,
+      )
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    const rows = (data ?? []) as { post: Post }[]
+    return rows
+      .map((row) => ({
+        ...row.post,
+        images: [...(row.post.images ?? [])]
+          .sort((a, b) => toNumber(a.position) - toNumber(b.position))
+          .filter((img: PostImage) => img.wallpaper) as PostImage[],
+      }))
+      .filter((post) => (post.images?.length ?? 0) > 0)
+  },
+
   async fetchMyPosts(userId: string): Promise<Post[]> {
     const supabase = createClient()
     const { data, error } = await supabase

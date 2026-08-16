@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { Star, Play, Heart } from "lucide-react";
+import { Star, Play, Heart, Bookmark } from "lucide-react";
 import Link from "next/link";
 import type { Wallpaper } from "./wallpaper-grid";
 
@@ -98,7 +98,7 @@ export function WallpaperCard({
                 isFavorited && "bg-purple-500/70 text-white",
               )}
             >
-              <Star
+              <Bookmark
                 className="h-3.5 w-3.5"
                 fill={isFavorited ? "currentColor" : "none"}
               />

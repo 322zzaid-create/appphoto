@@ -4,10 +4,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { PageHeader } from "@/components/layout/page-header";
-import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { Heart, Download, Shield, Sparkles } from "lucide-react";
+import { Bookmark, Download, Shield, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { InlineAd } from "@/components/ads/inline-ad";
@@ -28,13 +26,11 @@ export default function ProfilePage() {
     queryKey: ["profile-stats", user?.id],
     queryFn: async () => {
       if (!user) return null;
-      const [uploads, downloads, favorites] = await Promise.all([
-        supabase.from("wallpapers").select("id", { count: "exact", head: true }).eq("uploader_id", user.id),
+      const [downloads, favorites] = await Promise.all([
         supabase.from("downloads").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("favorites").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
       return {
-        uploads: uploads.count ?? 0,
         downloads: downloads.count ?? 0,
         favorites: favorites.count ?? 0,
       };
@@ -45,6 +41,7 @@ export default function ProfilePage() {
   if (authLoading || !user) {
     return (
       <div className="space-y-6">
+        <div className="h-24 w-24 animate-pulse rounded-full bg-white/5" />
         <div className="h-8 w-48 animate-pulse rounded bg-white/5" />
         <div className="h-40 animate-pulse rounded-2xl bg-white/5" />
       </div>
@@ -53,47 +50,43 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <PageHeader
-        title="Profile"
-        breadcrumbs={[{ label: "Profile", href: "/profile" }]}
-      />
-
-      <div className="glass-card mb-8 p-6">
-        <div className="flex items-center gap-4">
+      {/* Profile at the top, mirroring the studio layout */}
+      <div className="mb-8 flex flex-col items-center text-center">
+        <div className="mb-4 shrink-0">
           <Avatar
             src={user.avatar_url}
             name={user.full_name || user.username}
             size="xl"
           />
-          <div>
-            <h2 className="text-xl font-bold text-white">
-              {user.full_name || user.username}
-            </h2>
-            <p className="text-sm text-white/40">@{user.username}</p>
-            {user.bio && (
-              <p className="mt-1 text-sm text-white/60">{user.bio}</p>
-            )}
-            {user.role === "admin" && (
-              <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-500/20 px-2.5 py-0.5 text-xs font-medium text-purple-400">
-                <Shield className="h-3 w-3" />
-                Admin
-              </span>
-            )}
-          </div>
-          <div className="ml-auto">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push("/studio")}
-            >
-              <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              Studio
-            </Button>
-          </div>
+        </div>
+        <h3 className="text-2xl font-bold text-white">
+          {user.full_name || user.username}
+        </h3>
+        <p className="mt-1 text-sm text-white/40">@{user.username}</p>
+        <div className="mt-3">
+          {user.role === "admin" ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/20 px-3 py-1 text-xs font-medium text-purple-400 ring-1 ring-purple-500/30">
+              <Shield className="h-3 w-3" />
+              Admin
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/60 ring-1 ring-white/10">
+              <User className="h-3 w-3 text-white/40" />
+              User
+            </span>
+          )}
         </div>
       </div>
 
       <div className="mb-8 grid grid-cols-2 gap-4">
+        <Link
+          href="/favorites"
+          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
+        >
+          <Bookmark className="mx-auto mb-2 h-5 w-5 text-purple-400" />
+          <p className="text-2xl font-bold text-white">{stats?.favorites ?? 0}</p>
+          <p className="text-xs text-white/40">Saved</p>
+        </Link>
         <Link
           href="/downloads"
           className="glass-card p-4 text-center transition-colors hover:bg-white/10"
@@ -101,14 +94,6 @@ export default function ProfilePage() {
           <Download className="mx-auto mb-2 h-5 w-5 text-blue-400" />
           <p className="text-2xl font-bold text-white">{stats?.downloads ?? 0}</p>
           <p className="text-xs text-white/40">Downloads</p>
-        </Link>
-        <Link
-          href="/favorites"
-          className="glass-card p-4 text-center transition-colors hover:bg-white/10"
-        >
-          <Heart className="mx-auto mb-2 h-5 w-5 text-red-400" />
-          <p className="text-2xl font-bold text-white">{stats?.favorites ?? 0}</p>
-          <p className="text-xs text-white/40">Favorites</p>
         </Link>
       </div>
 

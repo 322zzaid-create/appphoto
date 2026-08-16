@@ -4,7 +4,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Dropdown } from "@/components/ui/dropdown";
 import {
   User,
-  Heart,
+  Bookmark,
   Download,
   Settings,
   LogOut,
@@ -25,7 +25,7 @@ interface UserMenuProps {
 export function UserMenu({ user, onLogout, className }: UserMenuProps) {
   const items = [
     { label: "Profile", value: "profile", icon: <User className="h-4 w-4" /> },
-    { label: "Favorites", value: "favorites", icon: <Heart className="h-4 w-4" /> },
+    { label: "Saved", value: "favorites", icon: <Bookmark className="h-4 w-4" /> },
     { label: "Downloads", value: "downloads", icon: <Download className="h-4 w-4" /> },
     { label: "Settings", value: "settings", icon: <Settings className="h-4 w-4" /> },
     ...(user.isAdmin

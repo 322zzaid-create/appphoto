@@ -144,7 +144,7 @@ export function WallpaperDetailContent({ id }: { id: string }) {
           favoriteIds={favoriteIds}
           onFavorite={(sid) => {
             if (!user) {
-              toast.error("Please login to add favorites");
+              toast.error("Please login to save");
               return;
             }
             toggleFavorite(sid);
@@ -198,12 +198,12 @@ export function WallpaperDetailContent({ id }: { id: string }) {
         isFavorited={isFavorited(wallpaper.id)}
         onFavorite={() => {
           if (!user) {
-            toast.error("Please login to add favorites");
+            toast.error("Please login to save");
             return;
           }
           const wasFavorited = isFavorited(wallpaper.id);
           toggleFavorite(wallpaper.id);
-          toast.success(wasFavorited ? "Removed from favorites" : "Added to favorites");
+          toast.success(wasFavorited ? "Removed from saved" : "Added to saved");
         }}
         onRate={async (r) => {
           if (!user) {

@@ -18,6 +18,7 @@ import {
   Play,
   Tag,
   ArrowLeft,
+  Bookmark,
 } from "lucide-react";
 
 interface WallpaperDetailProps {
@@ -257,7 +258,7 @@ export function WallpaperDetail({
                 className="h-12 w-12 p-0 lg:h-10 lg:w-auto lg:px-4"
                 onClick={onFavorite}
               >
-                <Star className={cn("h-4 w-4", isFavorited && "fill-yellow-400 text-yellow-400")} />
+                <Bookmark className={cn("h-4 w-4", isFavorited && "fill-purple-400 text-purple-400")} />
               </Button>
               <Button
                 variant="secondary"

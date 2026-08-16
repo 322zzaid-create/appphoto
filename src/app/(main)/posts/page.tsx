@@ -8,6 +8,7 @@ import { usePosts } from "@/lib/hooks/usePosts";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Newspaper } from "lucide-react";
+import { toast } from "@/lib/utils/toast";
 
 export default function PostsPage() {
   const { user } = useAuth();
@@ -86,9 +87,25 @@ export default function PostsPage() {
                 onLike={(postId, wasLiked) =>
                   likePost.mutate({ postId, like: !wasLiked })
                 }
-                onSave={(postId, wasSaved) =>
-                  savePost.mutate({ postId, save: !wasSaved })
-                }
+                onSave={(postId, wasSaved) => {
+                  if (!user) {
+                    toast.error("Please login to save posts");
+                    return;
+                  }
+                  savePost.mutate(
+                    { postId, save: !wasSaved },
+                    {
+                      onSuccess: () =>
+                        toast.success(
+                          !wasSaved
+                            ? "Post saved"
+                            : "Post removed from saved",
+                        ),
+                      onError: () =>
+                        toast.error("Failed to update saved posts"),
+                    },
+                  );
+                }}
               />
             ))}
 
